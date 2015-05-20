@@ -17,7 +17,6 @@ public class DbModule extends AbstractModule {
 
     @Override
     protected void configure() {
-        bind(TestDao.class).asEagerSingleton();
         bind(DBI.class).toProvider(DBIProvider.class);
     }
 

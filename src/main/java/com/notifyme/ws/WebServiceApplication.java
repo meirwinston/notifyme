@@ -8,6 +8,9 @@ import io.dropwizard.setup.Environment;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.DispatcherType;
+import java.util.EnumSet;
+
 /**
  * @author Meir Winston
  */
@@ -16,6 +19,9 @@ public class WebServiceApplication extends Application<Configuration> {
 
     @Inject
     private MainResource mainResource;
+
+    @Inject
+    private AuthFilter authFilter;
 
     public WebServiceApplication(){}
 
@@ -33,5 +39,10 @@ public class WebServiceApplication extends Application<Configuration> {
     public void run(Configuration configuration, Environment environment) throws Exception {
         logger.info("run");
         environment.jersey().register(mainResource);
+
+        environment.servlets()
+                .addFilter("AuthFilter", authFilter)
+                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/ws/*");
+
     }
 }

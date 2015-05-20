@@ -3,6 +3,7 @@ package com.notifyme;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.notifyme.ws.AuthFilter;
 import com.notifyme.ws.MainResource;
 import com.notifyme.ws.WebServiceApplication;
 import org.slf4j.Logger;
@@ -19,6 +20,7 @@ public class MainModule extends AbstractModule{
         install(new DbModule());
         bind(WebServiceApplication.class).asEagerSingleton();
         bind(MainResource.class).asEagerSingleton();
+        bind(AuthFilter.class).asEagerSingleton();
     }
 
     public static void main(String[] args){

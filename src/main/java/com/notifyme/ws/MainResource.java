@@ -1,15 +1,17 @@
 package com.notifyme.ws;
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
+import org.skife.jdbi.v2.sqlobject.BindBean;
+
+import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
+import java.util.UUID;
 
 /**
  * @author Meir Winston
  */
 @Path("/")
 @Produces(MediaType.APPLICATION_JSON)
+@Consumes(MediaType.APPLICATION_JSON)
 public class MainResource {
     @Path("sayHello")
     @GET
@@ -17,4 +19,9 @@ public class MainResource {
         return new Saying(1, "Hello");
     }
 
+    @Path("login")
+    @POST
+    public LoginResponse login(@BindBean LoginRequest loginRequest) {
+        return new LoginResponse(UUID.randomUUID().toString());
+    }
 }
