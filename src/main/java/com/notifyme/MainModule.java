@@ -3,29 +3,51 @@ package com.notifyme;
 import com.google.inject.AbstractModule;
 import com.google.inject.Guice;
 import com.google.inject.Injector;
+import com.google.inject.name.Names;
 import com.notifyme.ws.AuthFilter;
+import com.notifyme.ws.AuthResource;
 import com.notifyme.ws.MainResource;
 import com.notifyme.ws.WebServiceApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.IOException;
+import java.io.InputStream;
 
 /**
  * @author Meir Winston
  */
 public class MainModule extends AbstractModule{
     private static final Logger logger = LoggerFactory.getLogger(MainModule.class);
+    private ResolvedProperties properties;
+
+    public MainModule(ResolvedProperties properties){
+        this.properties = properties;
+    }
 
     @Override
     protected void configure() {
+        Names.bindProperties(binder(),this.properties);
+//        bind(ResolvedProperties.class).toInstance(properties);
+
         install(new DbModule());
         bind(WebServiceApplication.class).asEagerSingleton();
         bind(MainResource.class).asEagerSingleton();
+        bind(AuthResource.class).asEagerSingleton();
         bind(AuthFilter.class).asEagerSingleton();
+    }
+
+    private static ResolvedProperties loadProperties() throws IOException {
+        InputStream in = MainModule.class.getClassLoader().getResourceAsStream("dev/config.properties");
+        ResolvedProperties properties = new ResolvedProperties();
+        properties.load(in);
+        logger.info("PROPERTIES: {}", properties);
+        return properties;
     }
 
     public static void main(String[] args){
         try {
-            Injector injector = Guice.createInjector(new MainModule());
+            Injector injector = Guice.createInjector(new MainModule(loadProperties()));
             injector.getInstance(WebServiceApplication.class).run(new String[]{"server","src/main/resources/notifyme.yml"});
             logger.info("STARTED {}", injector);
         } catch (Exception e) {

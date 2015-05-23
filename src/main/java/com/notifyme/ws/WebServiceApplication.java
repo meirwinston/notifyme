@@ -5,6 +5,7 @@ import io.dropwizard.Application;
 import io.dropwizard.Configuration;
 import io.dropwizard.setup.Bootstrap;
 import io.dropwizard.setup.Environment;
+import org.eclipse.jetty.server.session.SessionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -19,6 +20,9 @@ public class WebServiceApplication extends Application<Configuration> {
 
     @Inject
     private MainResource mainResource;
+
+    @Inject
+    private AuthResource authResource;
 
     @Inject
     private AuthFilter authFilter;
@@ -39,6 +43,10 @@ public class WebServiceApplication extends Application<Configuration> {
     public void run(Configuration configuration, Environment environment) throws Exception {
         logger.info("run");
         environment.jersey().register(mainResource);
+        environment.jersey().register(authResource);
+
+        //to be able to get session: request.getSession()
+        environment.servlets().setSessionHandler(new SessionHandler());
 
         environment.servlets()
                 .addFilter("AuthFilter", authFilter)
