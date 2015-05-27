@@ -1,8 +1,11 @@
 package com.notifyme.bean;
 
+import com.wordnik.swagger.annotations.ApiModel;
+
 /**
  * @author Meir Winston
  */
+@ApiModel("Login response")
 public class LoginResponse {
     private String authToken;
 

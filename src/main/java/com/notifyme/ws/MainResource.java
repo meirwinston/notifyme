@@ -1,5 +1,7 @@
 package com.notifyme.ws;
 
+import com.wordnik.swagger.annotations.Api;
+
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 
@@ -9,6 +11,7 @@ import javax.ws.rs.core.MediaType;
 @Path("/ws")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
+@Api(value = "/ws", description = "Authentication Web Services")
 public class MainResource {
     @Path("sayHello")
     @GET

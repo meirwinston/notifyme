@@ -1,11 +1,9 @@
 package com.notifyme.db;
 
 import com.notifyme.bean.LoginRequest;
-import org.skife.jdbi.v2.sqlobject.Bind;
 import org.skife.jdbi.v2.sqlobject.BindBean;
 import org.skife.jdbi.v2.sqlobject.SqlQuery;
 import org.skife.jdbi.v2.sqlobject.customizers.Mapper;
-
 import java.util.List;
 
 /**

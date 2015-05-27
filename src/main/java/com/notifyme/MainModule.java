@@ -10,7 +10,6 @@ import com.notifyme.ws.MainResource;
 import com.notifyme.ws.WebServiceApplication;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 
@@ -25,10 +24,11 @@ public class MainModule extends AbstractModule{
         this.properties = properties;
     }
 
+    private static String env = "dev";
+
     @Override
     protected void configure() {
         Names.bindProperties(binder(),this.properties);
-//        bind(ResolvedProperties.class).toInstance(properties);
 
         install(new DbModule());
         bind(WebServiceApplication.class).asEagerSingleton();
@@ -37,21 +37,24 @@ public class MainModule extends AbstractModule{
         bind(AuthFilter.class).asEagerSingleton();
     }
 
-    private static ResolvedProperties loadProperties() throws IOException {
-        InputStream in = MainModule.class.getClassLoader().getResourceAsStream("dev/config.properties");
-        ResolvedProperties properties = new ResolvedProperties();
-        properties.load(in);
-        logger.info("PROPERTIES: {}", properties);
-        return properties;
-    }
-
-    public static void main(String[] args){
-        try {
-            Injector injector = Guice.createInjector(new MainModule(loadProperties()));
-            injector.getInstance(WebServiceApplication.class).run(new String[]{"server","src/main/resources/notifyme.yml"});
-            logger.info("STARTED {}", injector);
-        } catch (Exception e) {
-            logger.error(e.getMessage(), e);
-        }
-    }
+//    private static ResolvedProperties loadProperties() throws IOException {
+//        InputStream in = MainModule.class.getClassLoader().getResourceAsStream(env + "/config.properties");
+//        ResolvedProperties properties = new ResolvedProperties();
+//        properties.load(in);
+//        logger.info("PROPERTIES: {}", properties);
+//        return properties;
+//    }
+//
+//    public static void main(String[] args){
+//        try {
+//            String ymlPath = MainModule.class.getClassLoader().getResource(env + "/config.yml").getPath();
+//            logger.info("config.yml path {}", ymlPath);
+//            Injector injector = Guice.createInjector(new MainModule(loadProperties()));
+//            injector.getInstance(WebServiceApplication.class).run(new String[]{"server",ymlPath});
+//            logger.info("STARTED {}", injector);
+//        } catch (Exception e) {
+//            e.printStackTrace(System.out);
+//            logger.error(e.getMessage(), e);
+//        }
+//    }
 }
