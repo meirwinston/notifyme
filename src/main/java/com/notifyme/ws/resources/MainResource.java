@@ -1,5 +1,6 @@
-package com.notifyme.ws;
+package com.notifyme.ws.resources;
 
+import com.notifyme.ws.Saying;
 import com.wordnik.swagger.annotations.Api;
 
 import javax.ws.rs.*;

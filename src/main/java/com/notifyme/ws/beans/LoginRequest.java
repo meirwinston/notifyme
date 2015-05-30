@@ -1,4 +1,4 @@
-package com.notifyme.bean;
+package com.notifyme.ws.beans;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

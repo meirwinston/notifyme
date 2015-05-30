@@ -2,6 +2,10 @@ package com.notifyme.ws;
 
 import com.google.inject.Inject;
 import com.notifyme.ResolvedProperties;
+import com.notifyme.ws.resources.AuthResource;
+import com.notifyme.ws.resources.MainResource;
+import com.notifyme.ws.resources.OrganizationResource;
+import com.notifyme.ws.resources.TopicResource;
 import com.wordnik.swagger.config.ConfigFactory;
 import com.wordnik.swagger.config.ScannerFactory;
 import com.wordnik.swagger.config.SwaggerConfig;
@@ -19,15 +23,11 @@ import io.dropwizard.setup.Environment;
 import org.eclipse.jetty.server.session.SessionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import javax.servlet.DispatcherType;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.InetAddress;
-import java.net.MalformedURLException;
 import java.net.URL;
-import java.net.UnknownHostException;
-import java.util.EnumSet;
 
 /**
  * @author Meir Winston
@@ -47,7 +47,15 @@ public class WebServiceApplication extends Application<Configuration> {
     @Inject
     private ResolvedProperties properties;
 
-    public WebServiceApplication(){}
+    @Inject
+    private TopicResource topicResource;
+
+    @Inject
+    private OrganizationResource organizationResource;
+
+    @Inject
+    public WebServiceApplication(){
+    }
 
     @Override
     public String getName() {
@@ -63,8 +71,14 @@ public class WebServiceApplication extends Application<Configuration> {
     @Override
     public void run(Configuration configuration, Environment environment) throws Exception {
         logger.info("run");
+        // Register the custom ExceptionMapper
+        environment.jersey().register(new GenericExceptionMapper());
+
         environment.jersey().register(mainResource);
         environment.jersey().register(authResource);
+        environment.jersey().register(topicResource);
+        environment.jersey().register(organizationResource);
+
 
         //to be able to get session: request.getSession()
         environment.servlets().setSessionHandler(new SessionHandler());
@@ -73,6 +87,7 @@ public class WebServiceApplication extends Application<Configuration> {
 //                .addFilter("AuthFilter", authFilter)
 //                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/ws/*");
         runSwagger(configuration, environment);
+
 
     }
 
@@ -114,4 +129,5 @@ public class WebServiceApplication extends Application<Configuration> {
         String ip = in.readLine(); //you get the IP as a String
         return ip;
     }
+
 }
