@@ -12,6 +12,7 @@ import com.wordnik.swagger.annotations.ApiOperation;
 import com.wordnik.swagger.annotations.ApiResponse;
 import com.wordnik.swagger.annotations.ApiResponses;
 import com.wordnik.swagger.annotations.Api;
+import org.joda.time.DateTime;
 import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -49,7 +50,8 @@ public class AuthResource {
     @Path("login")
     @POST
     public LoginResponse login(LoginRequest loginRequest, @Context HttpServletRequest request) {
-        if (!dbi.open(AccountDao.class).usernameAndPasswordExist(loginRequest.getUsername(), loginRequest.getPassword())) {
+        long id = dbi.open(AccountDao.class).getAccountId(loginRequest.getUsername(), loginRequest.getPassword());
+        if (id <= 0) {
             throw new NotAuthorizedException("Incorrect username and/or password");
         }
         return new LoginResponse(request.getSession().getId());
@@ -66,6 +68,7 @@ public class AuthResource {
     @POST
     public SignupResponse signup(SignupRequest signupRequest, @Context HttpServletRequest request) {
         Account account = new Account();
+        account.setCreatedDate(new DateTime());
         account.setCountryCode(CountryCode.valueOf(signupRequest.getCountryCode()));
         account.setPassword(signupRequest.getPassword());
         account.setPhoneNumber(signupRequest.getPhoneNumber());

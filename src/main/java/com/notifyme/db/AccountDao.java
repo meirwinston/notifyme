@@ -13,8 +13,11 @@ public interface AccountDao {
     @Mapper(RewardMapper.class)
     List<Reward> getRewards();
 
-    @SqlQuery("select count(username) > 0 from accounts where username = :username and password = :password")
-    boolean usernameAndPasswordExist(@Bind String username, @Bind String password);
+//    @SqlQuery("select count(username) > 0 from accounts where username = :username and password = :password")
+//    boolean usernameAndPasswordExist(@Bind String username, @Bind String password);
+
+    @SqlQuery("select id from accounts where username = :username and password = :password")
+    long getAccountId(@Bind String username, @Bind String password);
 
     @GetGeneratedKeys
     @SqlUpdate("insert into accounts(username, password, phoneNumber, countryCode) values (:username, :password, :phoneNumber, :countryCode)")
