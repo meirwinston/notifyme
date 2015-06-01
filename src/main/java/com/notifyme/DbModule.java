@@ -1,14 +1,20 @@
 package com.notifyme;
 
+import com.google.common.base.Optional;
 import com.google.inject.AbstractModule;
 import com.google.inject.Inject;
 import com.google.inject.Provider;
 import com.google.inject.name.Named;
+import com.notifyme.db.DateTimeMapper;
 import com.zaxxer.hikari.HikariConfig;
 import com.zaxxer.hikari.HikariDataSource;
+import io.dropwizard.jdbi.args.JodaDateTimeArgumentFactory;
+import io.dropwizard.jdbi.args.JodaDateTimeMapper;
 import org.skife.jdbi.v2.DBI;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.TimeZone;
 
 /**
  * @author Meir Winston
@@ -42,7 +48,11 @@ public class DbModule extends AbstractModule {
             cfg.setUsername(dbUsername);
             cfg.setJdbcUrl(dbUrl);
             HikariDataSource db = new HikariDataSource(cfg);
-            return new DBI(db);
+            DBI dbi = new DBI(db);
+            dbi.registerMapper(new JodaDateTimeMapper(Optional.of(TimeZone.getTimeZone("UTC"))));
+            dbi.registerArgumentFactory(new JodaDateTimeArgumentFactory());
+
+            return dbi;
         }
     }
 }
