@@ -1,6 +1,6 @@
 package com.notifyme.ws;
 
-import org.apache.commons.lang3.StringUtils;
+import com.google.common.base.Strings;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import javax.servlet.*;
@@ -17,7 +17,6 @@ import java.util.Enumeration;
  */
 public class AuthFilter implements Filter {
     static final Logger logger = LoggerFactory.getLogger(AuthFilter.class);
-    public static final String APPLICATION_TOKEN = "ApplicationToken";
 
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
@@ -35,16 +34,16 @@ public class AuthFilter implements Filter {
                 logger.info("doFilter, {}: {} ",n,httpRequest.getHeader(n));
             }
 
-            String accessToken = httpRequest.getHeader(AuthFilter.APPLICATION_TOKEN);
-            if(StringUtils.isEmpty(accessToken)){
-                accessToken = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
-            }
-            if(StringUtils.isEmpty(accessToken)){
+            String accessToken = httpRequest.getHeader(HttpHeaders.AUTHORIZATION);
+            if(Strings.isNullOrEmpty(accessToken)){
                 throw new WebApplicationException(401);
             }
             logger.debug("CHECK: {} == {}", httpRequest.getSession().getId(), accessToken);
             if(accessToken.equals(httpRequest.getSession().getId())){
                 filterChain.doFilter(request, response); //Propagate the message forward
+            }
+            else{
+                throw new WebApplicationException(401);
             }
         }
         catch(WebApplicationException exp){

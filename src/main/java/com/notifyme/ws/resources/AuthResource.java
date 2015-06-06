@@ -21,6 +21,7 @@ import javax.servlet.http.HttpServletRequest;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import java.util.Enumeration;
 
 /**
  * @author Meir Winston
@@ -50,10 +51,16 @@ public class AuthResource {
     @Path("login")
     @POST
     public LoginResponse login(LoginRequest loginRequest, @Context HttpServletRequest request) {
+        Enumeration<String> e = request.getHeaderNames();
+        while(e.hasMoreElements()){
+            String key = e.nextElement();
+            logger.info("HEADER: {}:{}", key, request.getHeader(key));
+        }
         long id = dbi.open(AccountDao.class).getAccountId(loginRequest.getUsername(), loginRequest.getPassword());
         if (id <= 0) {
             throw new NotAuthorizedException("Incorrect username and/or password");
         }
+        request.getSession().setAttribute("accountId",id);
         return new LoginResponse(request.getSession().getId());
     }
 

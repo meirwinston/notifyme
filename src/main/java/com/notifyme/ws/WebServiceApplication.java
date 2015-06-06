@@ -24,10 +24,12 @@ import org.eclipse.jetty.server.session.SessionHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import javax.servlet.DispatcherType;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.util.EnumSet;
 
 /**
  * @author Meir Winston
@@ -83,9 +85,9 @@ public class WebServiceApplication extends Application<Configuration> {
         //to be able to get session: request.getSession()
         environment.servlets().setSessionHandler(new SessionHandler());
 
-//        environment.servlets()
-//                .addFilter("AuthFilter", authFilter)
-//                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/ws/*");
+        environment.servlets()
+                .addFilter("AuthFilter", authFilter)
+                .addMappingForUrlPatterns(EnumSet.of(DispatcherType.REQUEST), true, "/topic/*", "/organization/*");
         runSwagger(configuration, environment);
 
 
