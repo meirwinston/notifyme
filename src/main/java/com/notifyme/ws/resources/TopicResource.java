@@ -7,6 +7,10 @@ import com.notifyme.db.entities.Subscription;
 import com.notifyme.db.entities.Topic;
 import com.notifyme.ws.beans.CreateTopicRequest;
 import com.notifyme.ws.beans.CreateTopicResponse;
+import com.notifyme.ws.beans.ListTopicsRequest;
+import com.notifyme.ws.beans.ListTopicsResponse;
+import com.notifyme.ws.beans.PushNotificationRequest;
+import com.notifyme.ws.beans.PushNotificationResponse;
 import com.notifyme.ws.beans.SubscribeRequest;
 import com.notifyme.ws.beans.SubscribeResponse;
 import com.wordnik.swagger.annotations.Api;
@@ -21,6 +25,7 @@ import javax.servlet.http.HttpSession;
 import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
+import java.util.List;
 
 /**
  * @author Meir Winston
@@ -80,6 +85,38 @@ public class TopicResource {
             throw new WebApplicationException("Could not insert, received id: " + id);
         }
         return new SubscribeResponse(id);
+    }
+
+
+    @ApiOperation(
+            value = "List topics",
+            notes = "lists topics created by the specified organization",
+            response = ListTopicsResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "Not authorized"),
+            @ApiResponse(code = 422, message = "Validation failed")
+    })
+    @Path("list")
+    @POST
+    public ListTopicsResponse listTopics(ListTopicsRequest request) {
+        List<Topic> list = dbi.open(TopicDao.class).select(request.getOrganizationId(), request.getOffset(), request.getCount());
+        return new ListTopicsResponse(list);
+    }
+
+    @ApiOperation(
+            value = "Push a notification",
+            notes = "Push a notification on the specified topic",
+            response = PushNotificationResponse.class)
+    @ApiResponses(value = {
+            @ApiResponse(code = 401, message = "Not authorized"),
+            @ApiResponse(code = 422, message = "Validation failed")
+    })
+    @Path("list")
+    @POST
+    public PushNotificationResponse pushNotification(PushNotificationRequest request) {
+//        List<Topic> list = dbi.open(TopicDao.class).select(request.getOrganizationId(), request.getOffset(), request.getCount());
+//        return new ListTopicsResponse(list);
+        return new PushNotificationResponse();
     }
 }
 
